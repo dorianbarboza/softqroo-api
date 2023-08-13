@@ -1,0 +1,51 @@
+version: '3.1'
+
+services:
+  
+
+  django:
+    container_name: softqroo-django
+    build: .
+    image: softqroo-api:latest
+    restart: always
+    env_file:
+      - ./.envs/.django
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    links:
+      - postgres
+    command: python manage.py runserver 0.0.0.0:8000
+
+
+  postgres:
+    container_name: softqroo-postgres
+    image: postgres:15.2
+    restart: always
+    env_file:
+      - ./.envs/.postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+  pgadmin4:
+    container_name: softqroo-pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - ./.envs/.pgadmin
+    ports:
+      - 8080:80
+    depends_on:
+      - postgres
+
+
+
+volumes:
+  pgdata:
+
